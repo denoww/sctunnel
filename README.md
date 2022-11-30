@@ -1,10 +1,11 @@
 # sctunnel
 
-TODOS OS DADOS são para testes. Num futuru não muito distante, iremos usar configurações para o condomínio (buscar câmeras dentro do condominio e sempre fazer a atualização)
+TODOS OS DADOS são para testes. Num futuro não muito distante, iremos usar configurações para do condomínio (buscar câmeras dentro do condominio e sempre fazer a atualização)
 
 ## Configurando rotina para atualizar a câmera no cameras1.seucondominio
 
 Execute:
+
 $ crontab -e
 
 adicione os 2 comandos:
