@@ -4,7 +4,8 @@ TODOS OS DADOS são para testes. Num futuru não muito distante, iremos usar con
 
 ## Configurando rotina para atualizar a câmera no cameras1.seucondominio
 
-Execute `crontab -e`
+Execute:
+$ crontab -e
 
 adicione os 2 comandos:
 
