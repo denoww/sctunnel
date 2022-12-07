@@ -10,6 +10,6 @@ $ crontab -e
 
 adicione os 2 comandos:
 
-`*/1 * * * * /usr/bin/sudo -u <USER_NANE> /bin/bash -lc 'bash /home/<USER_NANE>/ngrok-update.sh > /home/<USER_NANE>/ngrok-update-logs.txt'`
+`*/1 * * * * /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'bash /<PATH_TO_SH_FILE>/ngrok-update.sh > /<PATH_TO_SH_FILE>/ngrok-update-logs.txt'`
 
-`@reboot /usr/bin/sudo -u <USER_NANE> /bin/bash -lc 'bash /home/<USER_NANE>/ngrok-update.sh > /home/<USER_NANE>/ngrok-update-logs.txt'`
+`@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'bash /<PATH_TO_SH_FILE>/ngrok-update.sh > /<PATH_TO_SH_FILE>/ngrok-update-logs.txt'`
