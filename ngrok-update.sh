@@ -2,6 +2,7 @@ HOST=https://cameras1.seucondominio.com.br
 
 # sc-camera-1 (sctunnel rodando na empresa)
 STREAM_ID=vid_9_1239
+STREAM_CHANNEL_ID=13
 # DEV
 # STREAM_ID=1_development
 
@@ -29,7 +30,7 @@ function get_current_stream_obj {
 current_stream_obj=$(get_current_stream_obj)
 
 current_url=$(get_current_url)
-current_stream_url=$(echo $current_stream_obj | jq '.payload.channels["1"].url' | tr -d '"')
+current_stream_url=$(echo $current_stream_obj | jq '.payload.channels["'$STREAM_CHANNEL_ID'"].url' | tr -d '"')
 
 if [[ "$current_url" != "$current_stream_url" ]]
 then
@@ -51,7 +52,7 @@ echo "atualiznado url para $current_url"
 current_stream_name=$(echo $current_stream_obj | jq '.payload.name')
 
 # Atualizando a stream da Câmera atual
-json_data="{\"uuid\":\"$STREAM_ID\",\"name\":$current_stream_name,\"channels\":{\"0\":{\"url\":\"\",\"on_demand\":true,\"debug\":false},\"1\":{\"url\":\"$current_url\",\"on_demand\":true,\"debug\":false}}}"
+json_data="{\"uuid\":\"$STREAM_ID\",\"name\":$current_stream_name,\"channels\":{\"0\":{\"url\":\"\",\"on_demand\":true,\"debug\":false},\"$STREAM_CHANNEL_ID\":{\"url\":\"$current_url\",\"on_demand\":true,\"debug\":false}}}"
 
 curl --header "Content-Type: application/json" \
   --request POST \
