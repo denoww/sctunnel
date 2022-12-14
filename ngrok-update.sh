@@ -1,63 +1,10 @@
-HOST=https://cameras1.seucondominio.com.br
+jsonData=$(jq -r '' "confi-cameras.json")
 
-# sc-camera-1 (sctunnel rodando na empresa)
-STREAM_ID=vid_9_1239
-STREAM_CHANNEL_ID=13
-# DEV
-# STREAM_ID=1_development
+data=$(echo $jsonData | jq 'del(.cameras)')
 
-# LOCAL CAMERA ACCESS
-CAMERA_USER=admin
-CAMERA_USER_PASS=Abc12345
-CAMERA_ADRESS_IP=192.168.1.140
-CAMERA_ADRESS_PORTA=554
-CAMERA_CHANNEL=1
+cameras=$(echo $jsonData | jq '.cameras')
 
-function get_current_url {
-  current_url=$(ngrok api tunnels list)
-  current_url=$(echo $current_url | jq '.tunnels[0].public_url' | tr -d '"' | sed -e "s/tcp:[/][/]//")
-  current_url="rtsp://$CAMERA_USER:$CAMERA_USER_PASS@$current_url/cam/realmonitor?channel=$CAMERA_CHANNEL&subtype=1"
-
-  echo $current_url
-}
-
-function get_current_stream_obj {
-  current_str_obj=$(curl --request GET $HOST/stream/$STREAM_ID/info)
-
-  echo $current_str_obj
-}
-
-current_stream_obj=$(get_current_stream_obj)
-
-current_url=$(get_current_url)
-current_stream_url=$(echo $current_stream_obj | jq '.payload.channels["'$STREAM_CHANNEL_ID'"].url' | tr -d '"')
-
-if [[ "$current_url" != "$current_stream_url" ]]
-then
-  # Destruindo serviços antigos
-  killall ngrok
-
-  # Ligando ngrok em background
-  ngrok tcp $CAMERA_ADRESS_IP:$CAMERA_ADRESS_PORTA > /dev/null &
-else
-  echo 'Já atualizado'
-  exit 1
-fi
-
-current_url=$(get_current_url)
-
-# Buscando a URL pública criada no comando anterior
-echo "atualiznado url para $current_url"
-
-current_stream_name=$(echo $current_stream_obj | jq '.payload.name')
-
-# Atualizando a stream da Câmera atual
-json_data="{\"uuid\":\"$STREAM_ID\",\"name\":$current_stream_name,\"channels\":{\"0\":{\"url\":\"\",\"on_demand\":true,\"debug\":false},\"$STREAM_CHANNEL_ID\":{\"url\":\"$current_url\",\"on_demand\":true,\"debug\":false}}}"
-
-curl --header "Content-Type: application/json" \
-  --request POST \
-  --data $json_data \
-  $HOST/stream/$STREAM_ID/edit
-
-# Avisando que deu tudo certo
-echo 'OK'
+echo $cameras | jq -c '.[]' | while read camera; do
+  camera_params=$(echo ''$data' '$camera'' | jq -s add)
+  bash run-ngrok-update.sh "$camera_params"
+done
