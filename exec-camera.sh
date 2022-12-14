@@ -1,5 +1,3 @@
-echo ''
-echo 'Configurando Câmera'
 
 HOST=https://cameras1.seucondominio.com.br
 
@@ -18,6 +16,11 @@ CAMERA_USER_PASS=$(get_params "camera_user_pass")
 CAMERA_ADRESS_IP=$(get_params "camera_adress_ip")
 CAMERA_ADRESS_PORTA=$(get_params "camera_adress_porta")
 CAMERA_CHANNEL=$(get_params "camera_channel")
+
+echo ''
+echo "Configurando Stream $STREAM_ID channel $STREAM_CHANNEL_ID ($HOST)"
+echo "Câmera $CAMERA_CHANNEL ($CAMERA_ADRESS_IP:$CAMERA_ADRESS_PORTA)"
+echo ''
 
 function get_ngrok_obj {
   resp=$(ngrok api tunnels list | jq '.tunnels[0]')
