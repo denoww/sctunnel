@@ -1,11 +1,16 @@
-
-HOST=https://cameras1.seucondominio.com.br
-
 params=$1
+
+config=$(jq -r '.sc_stream_server' "config.json")
+
+function get_config {
+  echo $config | jq '.'$1'' | tr -d '"'
+}
 
 function get_params {
   echo $params | jq '.'$1'' | tr -d '"'
 }
+
+HOST=$(get_config "host")
 
 STREAM_ID=$(get_params "stream_id")
 STREAM_CHANNEL_ID=$(get_params "stream_channel_id")
@@ -16,11 +21,6 @@ CAMERA_USER_PASS=$(get_params "camera_user_pass")
 CAMERA_ADRESS_IP=$(get_params "camera_adress_ip")
 CAMERA_ADRESS_PORTA=$(get_params "camera_adress_porta")
 CAMERA_CHANNEL=$(get_params "camera_channel")
-
-echo ''
-echo "Configurando Stream $STREAM_ID channel $STREAM_CHANNEL_ID ($HOST)"
-echo "Câmera $CAMERA_CHANNEL ($CAMERA_ADRESS_IP:$CAMERA_ADRESS_PORTA)"
-echo ''
 
 function get_ngrok_obj {
   resp=$(ngrok api tunnels list | jq '.tunnels[0]')
@@ -62,29 +62,7 @@ then
     current_url=$(mount_current_url "$current_ngrok_obj")
   fi
 else
-  echo 'Já atualizado'
   exit 1
 fi
 
-# Atualizando a stream da Câmera atual
-json_data="{\"url\":\"$current_url\",\"on_demand\":true,\"debug\":false}"
-
-if [[ -n "$current_stream_url" ]]
-then
-  POST_URL=$HOST/stream/$STREAM_ID/channel/$STREAM_CHANNEL_ID/edit
-  info_text="Atualizando"
-else
-  POST_URL=$HOST/stream/$STREAM_ID/channel/$STREAM_CHANNEL_ID/add
-  info_text="Adicionando"
-fi
-
-echo "$info_text url para $current_url"
-
-curl -s --header "Content-Type: application/json" \
-  --request POST \
-  --data $json_data \
-  $POST_URL
-
-# Avisando que deu tudo certo
-echo ''
-echo 'OK'
+echo $current_url

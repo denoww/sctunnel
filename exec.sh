@@ -6,17 +6,26 @@ echo '--------------------------------------------------------------------------
 echo '---------------------------------------------------------------------------------'
 echo ''
 
-config=$(jq -r '' "config.json")
+echo 'get sc list'
+sc_streamns=$(bash app/get-rtsp-sc-list.sh)
+echo 'get config list'
+confg_streamns=$(bash app/get-rtsp-list.sh)
 
-echo $config | jq -c '.equipamentos[]' | while read equipamento; do
-  equipamento_obj=$(echo "$equipamento" | jq 'del(.cameras)')
+streamns=$(echo ''$sc_streamns' '$confg_streamns'' | jq -s add)
 
-  cameras=$(echo "$equipamento" | jq '.cameras')
+echo ''
 
-  echo $cameras | jq -c '.[]' | while read camera; do
-    camera_params=$(echo ''$equipamento_obj' '$camera'' | jq -s add)
-    bash exec-camera.sh "$camera_params"
+readarray -t list < <(echo $streamns | jq -c '.[]')
+for stream in "${list[@]}"; do
+
+  stream_obj=$(echo "$stream" | jq 'del(.cameras)')
+
+  cameras=$(echo "$stream" | jq '.cameras')
+  echo $cameras | jq -c '.[] | select(.url != null)' | while read camera; do
+    camera_params=$(echo ''$stream_obj' '$camera'' | jq -s add)
+    bash app/sync-stream.sh "$camera_params"
   done
+
 done
 
 echo ''
