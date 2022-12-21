@@ -5,18 +5,15 @@
     "cliente_id": 2
   },
   "sc_stream_server": {
-    "host":"https://cameras1.seucondominio.com.br"
+    "host": "https://cameras1.seucondominio.com.br"
   },
   "equipamentos": [
     {
       "stream_id": "vid_4644_1240",
-
-      "camera_user":      "admin",
+      "camera_user": "admin",
       "camera_user_pass": "ds171118",
-
-      "camera_adress_ip":    "192.168.1.108",
+      "camera_adress_ip": "192.168.1.108",
       "camera_adress_porta": "554",
-
       "cameras": [
         {
           "camera_channel": "5",

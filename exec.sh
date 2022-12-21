@@ -21,8 +21,6 @@ echo $confg_streamns
 
 streamns=$(echo ''$sc_streamns' '$confg_streamns'' | jq -s add)
 
-echo ''
-
 readarray -t list < <(echo $streamns | jq -c '.[]')
 for stream in "${list[@]}"; do
 
@@ -38,6 +36,6 @@ done
 
 echo ''
 echo '---------------------------------------------------------------------------------'
-echo 'OK OK OK OK OK OK OK OK OK OK OK OK OK'
+echo "OK OK OK OK OK OK OK OK OK OK OK OK OK ($(date))"
 echo '---------------------------------------------------------------------------------'
 echo ''
