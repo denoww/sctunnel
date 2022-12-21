@@ -1,12 +1,11 @@
-config=$(jq -r '.sc_server' "config.json")
-
 function get_config {
-  echo $config | jq '.'$1'' | tr -d '"'
+  config=$(jq -r '' "config.json")
+  echo $config | jq '.'$1''
 }
 
-HOST=$(get_config "host")
-TOKEN=$(get_config "token")
-CLIENTE_ID=$(get_config "cliente_id")
+HOST=$(get_config "sc_server.host" | tr -d '"')
+TOKEN=$(get_config "sc_server.token" | tr -d '"')
+CLIENTE_ID=$(get_config "sc_server.cliente_id" | tr -d '"')
 
 function montar_cameras {
   camera=$2

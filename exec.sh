@@ -6,10 +6,18 @@ echo '--------------------------------------------------------------------------
 echo '---------------------------------------------------------------------------------'
 echo ''
 
+# clear config
+new_config=$(jq -r '' "config.json" | jq 'del(.ngrok_tunnel)')
+echo $new_config | jq '.' > config.json
+
 echo 'get sc list'
 sc_streamns=$(bash app/get-rtsp-sc-list.sh)
+echo $sc_streamns
+
+echo ''
 echo 'get config list'
 confg_streamns=$(bash app/get-rtsp-list.sh)
+echo $confg_streamns
 
 streamns=$(echo ''$sc_streamns' '$confg_streamns'' | jq -s add)
 

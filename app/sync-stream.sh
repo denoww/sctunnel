@@ -1,15 +1,16 @@
 params=$1
-config=$(jq -r '.sc_stream_server' "config.json")
 
 function get_config {
-  echo $config | jq '.'$1'' | tr -d '"'
+  config=$(jq -r '' "config.json")
+  echo $config | jq '.'$1''
 }
+
 
 function get_params {
   echo $params | jq '.'$1'' | tr -d '"'
 }
 
-HOST=$(get_config "host")
+HOST=$(get_config "sc_stream_server.host" | tr -d '"')
 
 STREAM_ID=$(get_params "stream_id")
 STREAM_CHANNEL_ID=$(get_params "id")
@@ -22,15 +23,8 @@ echo "Configurando Stream $STREAM_ID channel $STREAM_CHANNEL_ID ($HOST)"
 echo "Câmera url $STREAM_CAMERA_URL"
 echo ''
 
-function mount_current_url {
-  current_url=$(echo $1 | jq '.public_url' | tr -d '"' | sed -e "s/tcp:[/][/]//")
-  current_url="rtsp://$CAMERA_USER:$CAMERA_USER_PASS@$current_url/cam/realmonitor?channel=$CAMERA_CHANNEL&subtype=1"
-
-  echo $current_url
-}
-
 function get_current_stream_obj {
-  current_str_obj=$(curl -s --request GET $HOST/stream/$STREAM_ID/channel/$STREAM_CHANNEL_ID/info )
+  current_str_obj=$(curl -s --request GET $HOST/stream/$STREAM_ID/channel/$STREAM_CHANNEL_ID/info)
 
   echo $current_str_obj
 }
@@ -48,8 +42,7 @@ fi
 # Atualizando a stream da Câmera atual
 json_data="{\"url\":\"$STREAM_CAMERA_URL\",\"on_demand\":true,\"debug\":false}"
 
-if [[ -n "$current_stream_url" ]]
-then
+if [[ -n "$current_stream_url" ]]; then
   POST_URL=$HOST/stream/$STREAM_ID/channel/$STREAM_CHANNEL_ID/edit
   info_text="Atualizando"
 else

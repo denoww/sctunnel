@@ -1,16 +1,15 @@
 params=$1
 
-config=$(jq -r '.sc_stream_server' "config.json")
-
 function get_config {
-  echo $config | jq '.'$1'' | tr -d '"'
+  config=$(jq -r '' "config.json")
+  echo $config | jq '.'$1''
 }
 
 function get_params {
   echo $params | jq '.'$1'' | tr -d '"'
 }
 
-HOST=$(get_config "host")
+HOST=$(get_config "sc_stream_server.host" | tr -d '"')
 
 STREAM_ID=$(get_params "stream_id")
 STREAM_CHANNEL_ID=$(get_params "stream_channel_id")
@@ -23,7 +22,15 @@ CAMERA_ADRESS_PORTA=$(get_params "camera_adress_porta")
 CAMERA_CHANNEL=$(get_params "camera_channel")
 
 function get_ngrok_obj {
-  resp=$(ngrok api tunnels list | jq '.tunnels[0]')
+  resp=$(get_config "ngrok_tunnel")
+
+  if [[ $resp == null ]]; then
+    resp=$(ngrok api tunnels list | jq '.tunnels[0]')
+
+    # salvando nova configuração
+    new_config=$(get_config | jq --argjson v "$resp" '.ngrok_tunnel = $v')
+    echo $new_config | jq '.' > config.json
+  fi
 
   echo $resp
 }
@@ -47,8 +54,7 @@ current_stream_obj=$(get_current_stream_obj)
 current_url=$(mount_current_url "$current_ngrok_obj")
 current_stream_url=$(echo $current_stream_obj | jq '.payload.url?' | tr -d '"')
 
-if [[ "$current_url" != "$current_stream_url" ]]
-then
+if [[ "$current_url" != "$current_stream_url" ]]; then
   forwards_to=$(echo $current_ngrok_obj | jq '.forwards_to' | tr -d '"')
   if [[ "$CAMERA_ADRESS_IP:$CAMERA_ADRESS_PORTA" != "$forwards_to" ]]
   then
@@ -59,10 +65,9 @@ then
     ngrok tcp $CAMERA_ADRESS_IP:$CAMERA_ADRESS_PORTA > /dev/null &
 
     current_ngrok_obj=$(get_ngrok_obj)
+
     current_url=$(mount_current_url "$current_ngrok_obj")
   fi
-else
-  exit 1
 fi
 
 echo $current_url
