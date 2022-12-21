@@ -14,10 +14,12 @@ Altere o arquivo config.json conforme sua necessidade
 
 Execute:
 
-$ crontab -e
+$ crontab -u $USER -e
+
+Obs.: Caso esse comando não abrir corretamente, tente com sudo
 
 adicione os 2 comandos:
 
-`*/1 * * * * /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'bash /<PATH_TO_SH_FILE>/sctunnel/exec.sh > /<PATH_TO_SH_FILE>/sctunnel/logs.txt'`
+`*/1 * * * * /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
 
-`@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'bash /<PATH_TO_SH_FILE>/sctunnel/exec.sh > /<PATH_TO_SH_FILE>/sctunnel/logs.txt'`
+`@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
