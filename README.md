@@ -23,3 +23,13 @@ adicione os 2 comandos:
 `*/1 * * * * /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
 
 `@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
+
+## baixe script de abrir porta
+
+´´´
+$ wget https://gist.githubusercontent.com/denoww/999fdddccf4cb3cc433e9be0c46e0c50/raw/find_unused_port.sh
+
+porta_aberta=$(ssh -i "~/portaria_staging_ssh_pem_key.pem" ubuntu@23.22.12.192 'bash -s' < find_unused_port.sh)
+echo $porta_aberta
+´´´
+
