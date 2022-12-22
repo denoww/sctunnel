@@ -24,6 +24,7 @@ CAMERA_ADRESS_PORTA=$(get_params "camera_adress_porta")
 CAMERA_CHANNEL=$(get_params "camera_channel")
 
 FORWARDS_TO="$CAMERA_ADRESS_IP:$CAMERA_ADRESS_PORTA"
+PUBLIC_IP="23.22.12.192"
 
 function get_sc_tunnel_obj {
   resp=$(get_config "sc_tunnel[\"$FORWARDS_TO\"]")
@@ -35,15 +36,13 @@ function get_sc_tunnel_obj {
       resp=$(ngrok api tunnels list | jq '.tunnels[0]')
     else
       # Com sctunnel
-      public_ip="23.22.12.192"
+      regex="([[:digit:]]+):$FORWARDS_TO ubuntu@$PUBLIC_IP"
 
-      regex="([[:digit:]]+):$FORWARDS_TO ubuntu@$public_ip"
-
-      command=$(ps -eo args | grep 'ssh' | grep "$FORWARDS_TO ubuntu@$public_ip")
+      command=$(ps -eo args | grep 'ssh' | grep "$FORWARDS_TO ubuntu@$PUBLIC_IP")
       if [[ $command =~ $regex ]]; then
         porta="${BASH_REMATCH[1]}"
 
-        public_url="$public_ip:$porta"
+        public_url="$PUBLIC_IP:$porta"
         resp="{\"public_url\": \"$public_url\", \"forwards_to\": \"$FORWARDS_TO\"}"
       fi
     fi
@@ -94,18 +93,18 @@ fi
 forwards_to=$(echo $current_tunnel_obj | jq '.forwards_to' | tr -d '"')
 if [[ "$FORWARDS_TO" != "$forwards_to" ]]; then
 
-  if [[ $USAR_NGROK ]]; then
+  if [[ $USAR_NGROK == true ]]; then
     # Destruindo serviços antigos
     killall ngrok
 
     # Ligando ngrok em background
     ngrok tcp $FORWARDS_TO > /dev/null &
   else
-    pid=$(ps aux | grep "\d+:$FORWARDS_TO ubuntu@$public_ip" | awk '{print $2}')
+    pid=$(ps aux | grep "\d+:$FORWARDS_TO ubuntu@$PUBLIC_IP" | awk '{print $2}')
     $(kill -9 $pid > /dev/null &)
 
-    porta=$(ssh -i "~/portaria_staging_ssh_pem_key.pem" ubuntu@$public_ip 'bash -s' < find_unused_port.sh)
-    ssh -N -o ServerAliveInterval=20 -i "~/portaria_staging_ssh_pem_key.pem" -R $porta:$FORWARDS_TO ubuntu@$public_ip > /dev/null &
+    porta=$(ssh -i "~/portaria_staging_ssh_pem_key.pem" ubuntu@$PUBLIC_IP 'bash -s' < find_unused_port.sh)
+    ssh -N -o ServerAliveInterval=20 -i "~/portaria_staging_ssh_pem_key.pem" -R $porta:$FORWARDS_TO ubuntu@$PUBLIC_IP > /dev/null &
   fi
 
   current_tunnel_obj=$(get_sc_tunnel_obj)
