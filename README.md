@@ -24,8 +24,7 @@ adicione os 2 comandos:
 
 `@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
 
-## baixe script de abrir porta
-
+## baixe script de descobrir porta aberta no servidor
 
 ```
 $ wget https://gist.githubusercontent.com/denoww/999fdddccf4cb3cc433e9be0c46e0c50/raw/find_unused_port.sh
