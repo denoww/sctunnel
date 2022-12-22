@@ -37,14 +37,15 @@ function get_sc_tunnel_obj {
       # Com sctunnel
       public_ip="23.22.12.192"
 
-      pid=$(ps aux | grep "$porta:$FORWARDS_TO ubuntu@$public_ip" | awk '{print $2}')
-      $(kill -9 $pid > /dev/null &)
+      regex="([[:digit:]]+):$FORWARDS_TO ubuntu@$public_ip"
 
-      porta=$(ssh -i "~/portaria_staging_ssh_pem_key.pem" ubuntu@$public_ip 'bash -s' < find_unused_port.sh)
-      ssh -N -o ServerAliveInterval=20 -i "~/portaria_staging_ssh_pem_key.pem" -R $porta:$FORWARDS_TO ubuntu@$public_ip > /dev/null &
+      command=$(ps -eo args | grep 'ssh' | grep "$FORWARDS_TO ubuntu@$public_ip")
+      if [[ $command =~ $regex ]]; then
+        porta="${BASH_REMATCH[1]}"
 
-      public_url="$public_ip:$porta"
-      resp="{\"public_url\": \"$public_url\", \"forwards_to\": \"$FORWARDS_TO\"}"
+        public_url="$public_ip:$porta"
+        resp="{\"public_url\": \"$public_url\", \"forwards_to\": \"$FORWARDS_TO\"}"
+      fi
     fi
 
     # salvando nova configuração
@@ -85,22 +86,31 @@ current_stream_obj=$(get_current_stream_obj)
 current_url=$(mount_current_url "$current_tunnel_obj")
 current_stream_url=$(echo $current_stream_obj | jq '.payload.url?' | tr -d '"')
 
-if [[ $USAR_NGROK ]]; then
-  if [[ "$current_url" != "$current_stream_url" ]]; then
-    forwards_to=$(echo $current_tunnel_obj | jq '.forwards_to' | tr -d '"')
-    if [[ "$FORWARDS_TO" != "$forwards_to" ]]
-    then
-      # Destruindo serviços antigos
-      killall ngrok
+if [[ "$current_url" == "$current_stream_url" ]]; then
+  echo $current_url
+  exit
+fi
 
-      # Ligando ngrok em background
-      ngrok tcp $FORWARDS_TO > /dev/null &
+forwards_to=$(echo $current_tunnel_obj | jq '.forwards_to' | tr -d '"')
+if [[ "$FORWARDS_TO" != "$forwards_to" ]]; then
 
-      current_tunnel_obj=$(get_sc_tunnel_obj)
+  if [[ $USAR_NGROK ]]; then
+    # Destruindo serviços antigos
+    killall ngrok
 
-      current_url=$(mount_current_url "$current_tunnel_obj")
-    fi
+    # Ligando ngrok em background
+    ngrok tcp $FORWARDS_TO > /dev/null &
+  else
+    pid=$(ps aux | grep "\d+:$FORWARDS_TO ubuntu@$public_ip" | awk '{print $2}')
+    $(kill -9 $pid > /dev/null &)
+
+    porta=$(ssh -i "~/portaria_staging_ssh_pem_key.pem" ubuntu@$public_ip 'bash -s' < find_unused_port.sh)
+    ssh -N -o ServerAliveInterval=20 -i "~/portaria_staging_ssh_pem_key.pem" -R $porta:$FORWARDS_TO ubuntu@$public_ip > /dev/null &
   fi
+
+  current_tunnel_obj=$(get_sc_tunnel_obj)
+
+  current_url=$(mount_current_url "$current_tunnel_obj")
 fi
 
 echo $current_url
