@@ -7,7 +7,7 @@ echo '--------------------------------------------------------------------------
 echo ''
 
 # clear config
-new_config=$(jq -r '' "config.json" | jq 'del(.sc_tunnel)')
+new_config=$(jq -r '.' "config.json" | jq '.sc_tunnel = {}')
 echo $new_config | jq '.' > config.json
 
 echo 'get sc list'

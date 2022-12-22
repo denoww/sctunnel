@@ -30,11 +30,13 @@ function montar_cameras {
 
     camera_address=$(echo $camera_params | jq -c '.camera_adress_ip' | tr -d '"')
     # camera_address="192.168.1.108"
+    # camera_address="0.tcp.sa.ngrok.io"
 
-    regex="([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
+    # regex="([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
+    regex="^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$"
 
     if [[ $camera_address =~ $regex ]]; then
-      # se for IP, vamos usar o ngrock para compartilhar as informacoes
+      # se for IP, vamos compartilhar as informacoes via tcp próprio ou com ngrok
 
       camera_url=$(bash app/get-custom-rtsp-camera.sh "$camera_params" 2>/dev/null)
 
