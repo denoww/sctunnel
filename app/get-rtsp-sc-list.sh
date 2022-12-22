@@ -16,7 +16,8 @@ function montar_cameras {
   camera_url=$(echo $camera_params | jq -c '.url')
   # camera_url="rtsp://admin:ds171118@0.tcp.sa.ngrok.io:13408/cam/realmonitor?channel=5&subtype=1"
 
-  regex="(.*)://(.*):(.*)@(.*):(.*)/cam/realmonitor\?channel\=(.*)&subtype=(.*)"
+  # regex="(.*)://(.*):(.*)@(.*):(.*)/cam/realmonitor\?channel\=(.*)&subtype=(.*)"
+  regex="(.*)://(.*):(.*)@(.*):([[:digit:]]+)/(.*)"
 
   if [[ $camera_url =~ $regex ]]; then
     camera_params=$(echo $camera_params | jq '.stream_channel_id = .id' )
@@ -24,7 +25,8 @@ function montar_cameras {
     camera_params=$(echo $camera_params | jq --arg v "${BASH_REMATCH[3]}" '.camera_user_pass = $v' )
     camera_params=$(echo $camera_params | jq --arg v "${BASH_REMATCH[4]}" '.camera_adress_ip = $v' )
     camera_params=$(echo $camera_params | jq --arg v "${BASH_REMATCH[5]}" '.camera_adress_porta = $v' )
-    camera_params=$(echo $camera_params | jq --arg v "${BASH_REMATCH[6]}" '.camera_channel = $v' )
+    # camera_params=$(echo $camera_params | jq --arg v "${BASH_REMATCH[6]}" '.camera_channel = $v' )
+    camera_params=$(echo $camera_params | jq --arg v "$(echo ${BASH_REMATCH[6]} | tr -d '"')" '.camera_adress_url_controller = $v' )
 
     camera_address=$(echo $camera_params | jq -c '.camera_adress_ip' | tr -d '"')
     # camera_address="192.168.1.108"
@@ -37,7 +39,11 @@ function montar_cameras {
       camera_url=$(bash app/get-custom-rtsp-camera.sh "$camera_params" 2>/dev/null)
 
       camera_params=$(echo $camera_params | jq --arg v "$camera_url" '.url = $v' )
+    else
+      exit
     fi
+  else
+    exit
   fi
 
   echo "$camera_params"
@@ -58,9 +64,15 @@ function montar_streamns {
     readarray -t cameras < <(echo $stream | jq -c '.cameras[] | select(.url != null)')
     for camera in "${cameras[@]}"; do
       camera_params=$(montar_cameras "$stream_obj" "$camera")
+      if [[ ! $camera_params ]]; then
+        continue
+      fi
 
       camera_id=$(echo $camera_params | jq '.stream_channel_id' | tr -d '"')
       camera_url=$(echo $camera_params | jq '.url' | tr -d '"')
+      if [[ ! $camera_url ]]; then
+        continue
+      fi
 
       camera_obj="{\"id\":$camera_id, \"url\":\"$camera_url\"}"
       resp_cameras+=($camera_obj)

@@ -22,7 +22,7 @@ function montar_cameras {
 function montar_streamns {
   resp=()
 
-  readarray -t list < <(echo $config | jq -c '.equipamentos[]')
+  readarray -t list < <(echo $config | jq -c '.equipamentos[]?')
   for equipamento in "${list[@]}"; do
     equipamento_obj=$(echo "$equipamento" | jq 'del(.cameras)')
 
