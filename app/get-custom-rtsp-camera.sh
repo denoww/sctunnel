@@ -64,7 +64,7 @@ function mount_current_url {
   current_url=$(echo $1 | jq '.public_url' | tr -d '"' | sed -e "s/tcp:[/][/]//")
 
   url_controller=$(get_params "camera_adress_url_controller")
-  if [[ url_controller == null ]]; then
+  if [[ $url_controller == null ]]; then
     url_controller="cam/realmonitor?channel=$CAMERA_CHANNEL&subtype=1"
   fi
 
@@ -103,7 +103,7 @@ if [[ "$FORWARDS_TO" != "$forwards_to" ]]; then
     pid=$(ps aux | grep "\d+:$FORWARDS_TO ubuntu@$PUBLIC_IP" | awk '{print $2}')
     $(kill -9 $pid > /dev/null &)
 
-    porta=$(ssh -i "~/portaria_staging_ssh_pem_key.pem" ubuntu@$PUBLIC_IP 'bash -s' < find_unused_port.sh)
+    porta=$(ssh -i "~/portaria_staging_ssh_pem_key.pem" ubuntu@$PUBLIC_IP 'bash -s' < app/find_unused_port.sh)
     ssh -N -o ServerAliveInterval=20 -i "~/portaria_staging_ssh_pem_key.pem" -R $porta:$FORWARDS_TO ubuntu@$PUBLIC_IP > /dev/null &
   fi
 
