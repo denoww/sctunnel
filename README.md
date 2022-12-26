@@ -27,3 +27,22 @@ adicione os 2 comandos:
 
 `@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
 
+
+## servidor (como criar caso não exista)
+
+
+
+```
+1 - cria uma máquina ec2
+2 - logue via ssh no servidor
+3 - habilite ssh remote na config com 
+4 - $ sudo nano /etc/ssh/sshd_config
+5 - Procure as linhas abaixos e deixem cada uma assim
+        AllowAgentForwarding yes
+        AllowTcpForwarding yes
+        GatewayPorts yes
+```
+
+
+
+
