@@ -41,6 +41,7 @@ adicione os 2 comandos:
   AllowAgentForwarding yes
   AllowTcpForwarding yes
   GatewayPorts yes
+6 - $ sudo service ssh restart
 ```
 
 
