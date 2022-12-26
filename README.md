@@ -7,6 +7,7 @@ TODOS OS DADOS são para testes. Num futuro não muito distante, iremos usar con
 Execute:
 
 $ cp /<PATH_TO_SH_FILE>/sctunnel/config-sample.json /<PATH_TO_SH_FILE>/sctunnel/config.json
+$ chmod 400 /<PATH_TO_SH_FILE>/sctunnelscTunnel.pem
 
 Altere o arquivo config.json conforme sua necessidade
 
