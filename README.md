@@ -34,19 +34,6 @@ $ sudo killall ssh; bash exec.sh
 
 ## AWS servidor SCTUNNEL (como criar caso não exista)
 
-
-```
-1 - cria uma máquina ec2
-2 - logue via ssh no servidor
-3 - habilite ssh remote na config com 
-4 - $ sudo nano /etc/ssh/sshd_config
-5 - Procure as linhas abaixos e deixem cada uma assim
-  AllowAgentForwarding yes
-  AllowTcpForwarding yes
-  GatewayPorts yes
-6 - $ sudo service ssh restart
-```
-
-
+https://github.com/denoww/sctunnel_server/blob/master/README.md
 
 
