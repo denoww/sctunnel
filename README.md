@@ -6,7 +6,10 @@ TODOS OS DADOS são para testes. Num futuro não muito distante, iremos usar con
 
 Execute:
 
+```
 $ cp /<PATH_TO_SH_FILE>/sctunnel/config-sample.json /<PATH_TO_SH_FILE>/sctunnel/config.json
+$ chmod 400 /<PATH_TO_SH_FILE>/sctunnel/scTunnel.pem
+```
 
 Altere o arquivo config.json conforme sua necessidade
 
@@ -23,4 +26,14 @@ adicione os 2 comandos:
 `*/1 * * * * /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
 
 `@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
+
+
+## Executando na mão
+
+$ sudo killall ssh; bash exec.sh
+
+## AWS servidor SCTUNNEL (como criar caso não exista)
+
+https://github.com/denoww/sctunnel_server/blob/master/README.md
+
 
