@@ -28,8 +28,7 @@ adicione os 2 comandos:
 `@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
 
 
-## servidor (como criar caso não exista)
-
+## AWS servidor SCTUNNEL (como criar caso não exista)
 
 
 ```
