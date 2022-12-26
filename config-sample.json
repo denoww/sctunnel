@@ -4,6 +4,10 @@
     "token": "T7jLk8A4Baor2FFb8mZL9",
     "cliente_id": 2
   },
+  "sc_tunnel_server": {
+    "host": "sctunnel1.seucondominio.com.br",
+    "pem_file": "scTunnel.pem"
+  },
   "sc_stream_server": {
     "host": "https://cameras1.seucondominio.com.br"
   },

@@ -1,5 +1,8 @@
 params=$1
 
+projectPath=$(builtin cd "$(dirname $0)/.."; pwd)
+
+
 USAR_NGROK=false
 
 function get_config {
@@ -24,7 +27,11 @@ CAMERA_ADRESS_PORTA=$(get_params "camera_adress_porta")
 CAMERA_CHANNEL=$(get_params "camera_channel")
 
 FORWARDS_TO="$CAMERA_ADRESS_IP:$CAMERA_ADRESS_PORTA"
-PUBLIC_IP="23.22.12.192"
+# SC_TUNNEL_ADDRESS="sctunnel1.seucondominio.com.br"
+
+SC_TUNNEL_ADDRESS=$(get_config "sc_tunnel_server.host" | tr -d '"')
+SC_TUNNEL_PEM_FILE="$projectPath/$(get_config "sc_tunnel_server.pem_file" | tr -d '"')"
+# SC_TUNNEL_PEM_FILE="~/scTunnel.pem"
 
 function get_sc_tunnel_obj {
   resp=$(get_config "sc_tunnel[\"$FORWARDS_TO\"]")
@@ -36,13 +43,13 @@ function get_sc_tunnel_obj {
       resp=$(ngrok api tunnels list | jq '.tunnels[0]')
     else
       # Com sctunnel
-      regex="([[:digit:]]+):$FORWARDS_TO ubuntu@$PUBLIC_IP"
+      regex="([[:digit:]]+):$FORWARDS_TO ubuntu@$SC_TUNNEL_ADDRESS"
 
-      command=$(ps -eo args | grep 'ssh' | grep "$FORWARDS_TO ubuntu@$PUBLIC_IP")
+      command=$(ps -eo args | grep 'ssh' | grep "$FORWARDS_TO ubuntu@$SC_TUNNEL_ADDRESS")
       if [[ $command =~ $regex ]]; then
         porta="${BASH_REMATCH[1]}"
 
-        public_url="$PUBLIC_IP:$porta"
+        public_url="$SC_TUNNEL_ADDRESS:$porta"
         resp="{\"public_url\": \"$public_url\", \"forwards_to\": \"$FORWARDS_TO\"}"
       fi
     fi
@@ -100,11 +107,11 @@ if [[ "$FORWARDS_TO" != "$forwards_to" ]]; then
     # Ligando ngrok em background
     ngrok tcp $FORWARDS_TO > /dev/null &
   else
-    pid=$(ps aux | grep "\d+:$FORWARDS_TO ubuntu@$PUBLIC_IP" | awk '{print $2}')
+    pid=$(ps aux | grep "\d+:$FORWARDS_TO ubuntu@$SC_TUNNEL_ADDRESS" | awk '{print $2}')
     $(kill -9 $pid > /dev/null &)
 
-    porta=$(ssh -i "~/portaria_staging_ssh_pem_key.pem" ubuntu@$PUBLIC_IP 'bash -s' < app/find_unused_port.sh)
-    ssh -N -o ServerAliveInterval=20 -i "~/portaria_staging_ssh_pem_key.pem" -R $porta:$FORWARDS_TO ubuntu@$PUBLIC_IP > /dev/null &
+    porta=$(ssh -i "$SC_TUNNEL_PEM_FILE" ubuntu@$SC_TUNNEL_ADDRESS 'bash -s' < app/find_unused_port.sh)
+    ssh -N -o ServerAliveInterval=20 -i "$SC_TUNNEL_PEM_FILE" -R $porta:$FORWARDS_TO ubuntu@$SC_TUNNEL_ADDRESS > /dev/null &
   fi
 
   current_tunnel_obj=$(get_sc_tunnel_obj)
