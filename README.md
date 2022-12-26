@@ -8,7 +8,7 @@ Execute:
 
 ```
 $ cp /<PATH_TO_SH_FILE>/sctunnel/config-sample.json /<PATH_TO_SH_FILE>/sctunnel/config.json
-$ chmod 400 /<PATH_TO_SH_FILE>/sctunnelscTunnel.pem
+$ chmod 400 /<PATH_TO_SH_FILE>/sctunnel/scTunnel.pem
 ```
 
 Altere o arquivo config.json conforme sua necessidade
