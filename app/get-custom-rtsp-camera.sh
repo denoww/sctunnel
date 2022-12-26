@@ -33,6 +33,8 @@ SC_TUNNEL_ADDRESS=$(get_config "sc_tunnel_server.host" | tr -d '"')
 SC_TUNNEL_PEM_FILE="$projectPath/$(get_config "sc_tunnel_server.pem_file" | tr -d '"')"
 # SC_TUNNEL_PEM_FILE="~/scTunnel.pem"
 
+
+
 function get_sc_tunnel_obj {
   resp=$(get_config "sc_tunnel[\"$FORWARDS_TO\"]")
 
@@ -86,6 +88,15 @@ function get_current_stream_obj {
   echo $current_str_obj
 }
 
+function findTunnelPort {
+  portas=$(curl -s --request GET http://${SC_TUNNEL_ADDRESS}:3020/unused_ports?qtd=1 )
+  echo $portas | jq -r '.portas[0]'
+  # portas=$(echo $portas | jq '.portas[0]')
+  # echo $portas
+  # echo "32367"
+  # echo '{"portas":["8077"]}' | jq -r '.portas[0]'
+}
+
 current_tunnel_obj=$(get_sc_tunnel_obj)
 current_stream_obj=$(get_current_stream_obj)
 
@@ -110,7 +121,9 @@ if [[ "$FORWARDS_TO" != "$forwards_to" ]]; then
     pid=$(ps aux | grep "\d+:$FORWARDS_TO ubuntu@$SC_TUNNEL_ADDRESS" | awk '{print $2}')
     $(kill -9 $pid > /dev/null &)
 
-    porta=$(ssh -i "$SC_TUNNEL_PEM_FILE" ubuntu@$SC_TUNNEL_ADDRESS 'bash -s' < app/find_unused_port.sh)
+    # porta=$(ssh -i "$SC_TUNNEL_PEM_FILE" ubuntu@$SC_TUNNEL_ADDRESS 'bash -s' < app/find_unused_port.sh)
+    porta=$(findTunnelPort)
+    # porta='8072'
     ssh -N -o ServerAliveInterval=20 -i "$SC_TUNNEL_PEM_FILE" -R $porta:$FORWARDS_TO ubuntu@$SC_TUNNEL_ADDRESS > /dev/null &
   fi
 
