@@ -7,8 +7,8 @@ TODOS OS DADOS são para testes. Num futuro não muito distante, iremos usar con
 Execute:
 
 ```
-$ cp /<PATH_TO_SH_FILE>/sctunnel/config-sample.json /<PATH_TO_SH_FILE>/sctunnel/config.json
-$ chmod 400 /<PATH_TO_SH_FILE>/sctunnel/scTunnel.pem
+$ cp /<PROJETO_DIR>/sctunnel/config-sample.json /<PROJETO_DIR>/sctunnel/config.json
+$ chmod 400 /<PROJETO_DIR>/sctunnel/scTunnel.pem
 ```
 
 Altere o arquivo config.json conforme sua necessidade
@@ -23,9 +23,9 @@ Obs.: Caso esse comando não abrir corretamente, tente com sudo
 
 adicione os 2 comandos:
 
-`*/1 * * * * /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
+`*/1 * * * * /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PROJETO_DIR>/sctunnel; bash exec.sh > logs.txt'`
 
-`@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PATH_TO_SH_FILE>/sctunnel; bash exec.sh > logs.txt'`
+`@reboot /usr/bin/sudo -u <USER_NAME> /bin/bash -lc 'cd /<PROJETO_DIR>/sctunnel; bash exec.sh > logs.txt'`
 
 
 ## Executando na mão
