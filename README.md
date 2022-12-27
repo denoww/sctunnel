@@ -11,6 +11,12 @@ $ cp /<PROJETO_DIR>/sctunnel/config-sample.json /<PROJETO_DIR>/sctunnel/config.j
 $ chmod 400 /<PROJETO_DIR>/sctunnel/scTunnel.pem
 ```
 
+```
+em config.json preencha
+cliente_id: 9999
+token: coloque valor PORTARIA_SERVER_SALT (se for usar localhost pegue em application.yml, se for produção peça ajuda)
+```
+
 Altere o arquivo config.json conforme sua necessidade
 
 ## Configurando rotina para atualizar a câmera no cameras1.seucondominio
