@@ -34,6 +34,6 @@ $ sudo killall ssh; bash exec.sh
 
 ## AWS servidor SCTUNNEL (como criar caso não exista)
 
-https://github.com/denoww/sctunnel_server/blob/master/README.md
+https://github.com/denoww/sctunnel_server
 
 
