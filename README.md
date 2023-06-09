@@ -2,13 +2,24 @@
 
 TODOS OS DADOS são para testes. Num futuro não muito distante, iremos usar configurações para do condomínio (buscar câmeras dentro do condominio e sempre fazer a atualização)
 
-## Configurando os equipamentos que deseja processar
+## Pegue o arquivo .pem
+
+Peça para alguém o .pem 
+
+ou pegue no outro repositório -> https://github.com/denoww/sctunnel_server
+
+Modifique a permissão
+
+```
+$ chmod 400 /<PROJETO_DIR>/sctunnel/scTunnel.pem
+```
+
+## Arrume a config
 
 Execute:
 
 ```
 $ cp /<PROJETO_DIR>/sctunnel/config-sample.json /<PROJETO_DIR>/sctunnel/config.json
-$ chmod 400 /<PROJETO_DIR>/sctunnel/scTunnel.pem
 ```
 
 ```
