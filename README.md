@@ -6,7 +6,7 @@ TODOS OS DADOS são para testes. Num futuro não muito distante, iremos usar con
 
 Peça para alguém o .pem 
 
-ou pegue no outro repositório -> https://github.com/denoww/sctunnel_server
+ou pegue no outro repositório que é privado -> sctunnel_server
 
 Modifique a permissão
 
