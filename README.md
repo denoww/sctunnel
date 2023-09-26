@@ -1,5 +1,7 @@
 # sctunnel está sendo migrado para sctunnel_client
 
+https://github.com/denoww/sctunnel_client
+
 # sctunnel
 
 TODOS OS DADOS são para testes. Num futuro não muito distante, iremos usar configurações para do condomínio (buscar câmeras dentro do condominio e sempre fazer a atualização)
